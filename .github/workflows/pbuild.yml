@@ -1,0 +1,27 @@
+name: Private Build
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Build
+      run: |
+        cmake ^
+          -DCMAKE_BUILD_TYPE=Release ^
+          -DBUILD_SHARED_LIBS=NO ^
+          -DBUILD_TESTING=NO ^
+          -S . -B build
+        cmake --build build
+      shell: cmd
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cmark_win_static
+        path: build/src/Debug/cmark.exe
+        if-no-files-found: error

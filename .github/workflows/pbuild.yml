@@ -1,0 +1,29 @@
+name: Private Build CPL
+# Co-Authored Copilot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Configure with CMake
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build (Release)
+        run: |
+          cmake --build build --config Release --parallel
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: cmark_win
+          path: build/src/Release/cmark.exe
+          if-no-files-found: warn
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
